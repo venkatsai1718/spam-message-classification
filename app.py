@@ -39,13 +39,16 @@ def transform_text(text):
         
     return " ".join(y)
 
-
-def bert_pred(msg):
-    # Load model
-    model = load_model(
+@st.cache_resource
+def get_model():
+    return load_model(
         "savedfiles/bert_dense_model.h5",
         custom_objects={"TFBertMainLayer": TFBertModel}
     )
+
+def bert_pred(msg):
+    # Load model
+    model = get_model()
 
     # Load tokenizer
     tokenizer = BertTokenizer.from_pretrained("savedfiles/bert_tokenizer/")
@@ -67,9 +70,17 @@ def bert_pred(msg):
     y_pred = model.predict(inp_dict)
     result = np.argmax(y_pred, axis=1)[0]
     return result
+
+@st.cache_resource
+def get_w2v_model():
+    return Word2Vec.load("w2v_model.model")
+@st.cache_resource
+def get_rf():
+    return pickle.load(open('rf_model.pkl', 'rb'))
+
 def word_2_vec(msg):
-    w2v_model = Word2Vec.load("w2v_model.model")
-    model = pickle.load(open('rf_model.pkl', 'rb'))
+    w2v_model = get_w2v_model()
+    model = get_rf()
 
     # 1. preprocess
     input_message = transform_text(msg)
