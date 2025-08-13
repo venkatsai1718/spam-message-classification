@@ -7,8 +7,8 @@ from nltk.stem.porter import PorterStemmer
 import string
 import numpy as np
 from tensorflow.keras.models import load_model
-from transformers import BertTokenizer, TFBertModel
-
+from transformers.models.bert.tokenization_bert import BertTokenizer
+from transformers.models.bert.modeling_tf_bert import TFBertModel
 
 ps = PorterStemmer()
 def get_sentense_vector(tokens, model):
@@ -39,9 +39,6 @@ def transform_text(text):
         
     return " ".join(y)
 
-st.title("Message Spam Classifier")
-input_message = st.text_input("Enter the message")
-embeds = st.selectbox('Select Embedding', ['Word2Vec', 'Bert'])
 
 def bert_pred(msg):
     # Load model
@@ -85,15 +82,23 @@ def word_2_vec(msg):
     return result
 
 # display
-if st.button('Check'):
-    st.write('Please wait while model is predicting..')
+def main():
+    st.title("Message Spam Classifier")
+    input_message = st.text_input("Enter the message")
+    embeds = st.selectbox('Select Embedding', ['Word2Vec', 'Bert'])
+    if st.button('Check'):
+        st.write('Please wait while model is predicting..')
 
-    if embeds == 'Bert':
-        result = bert_pred(input_message)
-    else:
-        result = word_2_vec(input_message)
-    
-    if result == 1:
-        st.header("SPAM")
-    else:
-        st.header("NOT SPAM")
+        if embeds == 'Bert':
+            result = bert_pred(input_message)
+        else:
+            result = word_2_vec(input_message)
+        
+        if result == 1:
+            st.header("SPAM")
+        else:
+            st.header("NOT SPAM")
+        
+        
+if __name__ == "__main__":
+    main()
