@@ -2,6 +2,7 @@ import streamlit as st
 import pickle
 from gensim.models import Word2Vec
 import nltk
+from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import string
@@ -9,6 +10,7 @@ import numpy as np
 from tensorflow.keras.models import load_model
 from transformers.models.bert.tokenization_bert import BertTokenizer
 from transformers.models.bert.modeling_tf_bert import TFBertModel
+nltk.data.path.append('/usr/share/nltk_data')
 
 ps = PorterStemmer()
 def get_sentense_vector(tokens, model):
@@ -17,7 +19,7 @@ def get_sentense_vector(tokens, model):
 
 def transform_text(text):
     text = text.lower()
-    text = nltk.word_tokenize(text)
+    text = word_tokenize(text)
     
     y = []
     for i in text:
